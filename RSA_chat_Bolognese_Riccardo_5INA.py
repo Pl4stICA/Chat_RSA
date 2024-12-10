@@ -2,7 +2,7 @@ import socket
 import threading
 import rsa
 
-#miao
+
 public_key, private_key = rsa.newkeys(1024)
 public_partner = None
 
