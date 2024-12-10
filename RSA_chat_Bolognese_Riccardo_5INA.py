@@ -36,7 +36,7 @@ choice = input("Vuoi hostare (1) o connetterti (2): ")
 if choice == "1":
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(("10.10.12.15", 9999))  
+    server.bind(("localhost", 9999))  
     server.listen()
 
     print("In attesa di connessioni...")
@@ -53,7 +53,7 @@ if choice == "1":
 elif choice == "2":
     
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(("10.10.12.15", 9999)) 
+    client.connect(("localhost", 9999)) 
     client.send(public_key.save_pkcs1("PEM"))
 
     public_partner_data = client.recv(1024)
