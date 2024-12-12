@@ -3,7 +3,7 @@ import threading
 import random
 import sys
 
-# Thread per ricevere i messaggi
+
 class ReceiveThread(threading.Thread):
     def __init__(self, client_socket):
         super().__init__()
@@ -68,14 +68,14 @@ def main():
         print("[ERROR] Invalid port number. Using default port 5555.")
         port = 5555
 
-    # Crea un oggetto Client e tenta di connettersi
+  
     client = Client()
     if client.connect(host, port, nickname):
-        # Avvia il thread per ricevere i messaggi
+      
         receive_thread = ReceiveThread(client.tcp_client)
         receive_thread.start()
 
-        # Invia messaggi
+    
         client.send_message()
 
 if __name__ == "__main__":
