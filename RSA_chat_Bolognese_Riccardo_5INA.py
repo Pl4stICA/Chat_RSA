@@ -75,15 +75,15 @@ def decrypt(encrypted_message, private_key):
 public_key = None
 private_key = None
 public_partner = None
+user_name = None 
+partner_name = None  
 
 def sending_messages(c):
     while True:
-        message = input("Tu: ")
+        message = input(f"{user_name}: ")  
         encrypted_message = encrypt(message, public_partner)
-        
-      
-        c.send(json.dumps(encrypted_message).encode())  
-        print("Tu: " + message)
+        c.send(json.dumps(encrypted_message).encode())
+        print(f"{user_name}: " + message)
 
 def receiving_messages(c):
     buffer = b""
@@ -93,23 +93,24 @@ def receiving_messages(c):
             if not data:
                 break 
 
-            buffer += data 
+            buffer += data
             try:
-                
                 message = buffer.decode()
-                encrypted_message = json.loads(message)  
+                encrypted_message = json.loads(message)
                 decrypted_message = decrypt(encrypted_message, private_key)
-                print("\nPartner: " + decrypted_message)
-                print("Tu: ", end="", flush=True)
-                buffer = b""  
+                print(f"\n{partner_name}: " + decrypted_message) 
+                print(f"{user_name}: ", end="", flush=True)
+                buffer = b""
             except json.JSONDecodeError:
-              
                 continue
         except Exception as e:
             print("Errore nella ricezione del messaggio:", e)
             break
 
 choice = input("Vuoi hostare (1) o connetterti (2): ")
+
+
+user_name = input("Scegli un nome utente: ")
 
 if choice == "1":
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -119,22 +120,25 @@ if choice == "1":
     client, _ = server.accept()
     print("Connessione stabilita.")
 
-    public_key, private_key = generate_keys(300)  
-
-    client.send(json.dumps(public_key).encode())  
+ 
+    public_key, private_key = generate_keys(300)
+    client.send(json.dumps({'public_key': public_key, 'user_name': user_name}).encode())
 
     public_partner_data = client.recv(1024)
-    public_partner = json.loads(public_partner_data.decode())  
+    partner_info = json.loads(public_partner_data.decode())
+    public_partner = partner_info['public_key']
+    partner_name = partner_info['user_name'] 
 elif choice == "2":
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect(("localhost", 9999))
 
-    public_key, private_key = generate_keys(300)  
-
-    client.send(json.dumps(public_key).encode()) 
+    public_key, private_key = generate_keys(300)
+    client.send(json.dumps({'public_key': public_key, 'user_name': user_name}).encode())
 
     public_partner_data = client.recv(1024)
-    public_partner = json.loads(public_partner_data.decode())  
+    partner_info = json.loads(public_partner_data.decode())
+    public_partner = partner_info['public_key']
+    partner_name = partner_info['user_name']  
 
 else:
     print("Scelta non valida. Uscita.")
