@@ -5,11 +5,11 @@ class Server(object):
     def __init__(self, hostname, port):
         self.clients = {}
 
-        # create server socket
+      
         self.tcp_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.tcp_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-        # start server
+ 
         self.tcp_server.bind((hostname, port))
         self.tcp_server.listen(5)
 
@@ -21,7 +21,7 @@ class Server(object):
             nickname = nickname.decode()
             self.clients[nickname] = connection
 
-            # start a thread for the client
+            
             threading.Thread(target=self.receive_message, args=(connection, nickname), daemon=True).start()
 
             print("[INFO] Connection from {}:{} AKA {}".format(address[0], address[1], nickname))
@@ -38,7 +38,7 @@ class Server(object):
             except:
                 connection.close()
 
-                #remove user from users list
+                
                 del(self.clients[nickname])
 
                 break
